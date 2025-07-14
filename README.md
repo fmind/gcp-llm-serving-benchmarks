@@ -60,6 +60,7 @@ TODO:
 - https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict
 - https://cloud.google.com/vertex-ai/docs/reference/rest#rest_endpoints
 - https://cloud.google.com/vertex-ai/docs/general/deployment#target_utilization_and_configuration
+- https://cloud.google.com/vertex-ai/pricing
 
 ### 3\. Cloud Run + GPU
 
@@ -85,6 +86,12 @@ TODO:
 - https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md
 - https://cloud.google.com/run/docs/run-gemma-on-cloud-run#set-concurrency-for-performance
 
+Limits:
+- Limit concurrency based scaling
+
+Solutions:
+- https://github.com/GoogleCloudPlatform/generative-ai/blob/main/open-models/serving/cloud_run_vllm_gemma3_inference.ipynb
+
 ### 4\. GKE + High-Performance Serving Framework (vLLM)
 
 - **Description**: This option involves deploying the model on a **Google Kubernetes Engine (GKE)** cluster using a specialized, high-performance serving framework. We will use **vLLM**, which optimizes inference through techniques like PagedAttention for increased throughput.
@@ -103,6 +110,10 @@ TODO:
 - https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm
 - https://cloud.google.com/kubernetes-engine/docs/integrations/ai-infra
 - https://cloud.google.com/kubernetes-engine/docs/how-to/serve-llm-l4-ray
+- https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#gemma-3-12b-it
+
+Limits:
+- Quota
 
 ---
 

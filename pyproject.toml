@@ -7,11 +7,10 @@ requires-python = ">=3.13"
 dependencies = [
     "google-auth>=2.40.3",
     "locust>=2.37.12",
+    "plotly[express]>=6.2.0",
+    "polars>=1.31.0",
     "python-dotenv>=1.1.1",
 ]
 
 [dependency-groups]
-dev = [
-    "ruff>=0.12.3",
-    "ty>=0.0.1a14",
-]
+dev = ["ipykernel>=6.29.5", "nbformat>=5.10.4", "ruff>=0.12.3", "ty>=0.0.1a14"]

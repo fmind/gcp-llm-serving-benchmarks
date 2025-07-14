@@ -20,7 +20,7 @@ bench module="VertexAIMaaS" model="gemini-2.5-flash" data="data/databricks-dolly
 	--users {{users}} --run-time {{run-time}} --spawn-rate {{spawn-rate}} --model="{{model}}" --data="{{data}}"
 
 # benchmark all solutions
-benchs: (bench "VertexAIMaaS" "gemini-2.5-flash-lite-preview-06-17") (bench "VertexAIMaaS" "gemini-2.5-flash") (bench "VertexAIEndpoint" "gemma-3-12b-it") (bench "CloudRun" "gemma3:12b")
+benchs: (bench "VertexAIMaaS" "gemini-2.5-flash-lite-preview-06-17") (bench "VertexAIMaaS" "gemini-2.5-flash") (bench "VertexAIEndpoint" "gemma-3-12b-it") (bench "CloudRunOllama" "gemma3:12b")
 
 # check the source code
 check:
@@ -37,9 +37,9 @@ format:
 install:
     uv sync --all-groups
 
-# setup the cloud run model serving
-setup-cloud-run model="gemma3-12b":
-	gcloud run deploy {{model}} \
+# setup the cloud run ollama model serving
+setup-cloud-run-ollama model="gemma3-12b":
+	gcloud run deploy {{model}}-ollama \
 		--cpu=8 --max-instances=2 --memory=32Gi \
 		--gpu=1 --gpu-type=nvidia-l4 --no-gpu-zonal-redundancy \
 		--image=us-docker.pkg.dev/cloudrun/container/gemma/{{model}} \
@@ -49,10 +49,30 @@ setup-cloud-run model="gemma3-12b":
 		--set-env-vars OLLAMA_NUM_PARALLEL=4 \
 		--set-env-vars API_KEY=$API_KEY
 
-# proxy the cloud run model serving
-proxy-cloud-run model="gemma3-12b":
-	gcloud run services proxy {{model}} --port=8080 --region=$LOCATION --project=$PROJECT_ID
+# proxy the cloud run ollama model serving
+proxy-cloud-run-ollama model="gemma3-12b":
+	gcloud run services proxy {{model}}-ollama --port=8080 --region=$LOCATION --project=$PROJECT_ID
 
-# destroy the cloud run model serving
-destroy-cloud-run model="gemma3-12b":
-	gcloud run services delete {{model}} --region=$LOCATION --project=$PROJECT_ID
+# destroy the cloud run ollama model serving
+destroy-cloud-run-ollama model="gemma3-12b":
+	gcloud run services delete {{model}}-ollama --region=$LOCATION --project=$PROJECT_ID
+
+# # setup the cloud run vllm model serving
+# setup-cloud-run-vllm model="gemma-3-4b-it" provider="google":
+# 	gcloud run deploy {{provider}}-{{model}}-vllm \
+# 		--cpu=8 --max-instances=3 --memory=32Gi \
+# 		--gpu=1 --gpu-type=nvidia-l4 --no-gpu-zonal-redundancy \
+# 		--image=vllm/vllm-openai:latest --port=8080 \
+# 		--args="--model={{provider}}/{{model}},--dtype=bfloat16,--max-model-len=200,--max-num-seqs=100,--host=0.0.0.0,--port=8080" \
+# 		--timeout=1200 --concurrency=80--ingress=all \
+# 		--allow-unauthenticated --no-cpu-throttling \
+# 		--project=$PROJECT_ID --region=$LOCATION \
+# 		--set-env-vars HUGGING_FACE_HUB_TOKEN=$HUGGING_FACE_HUB_TOKEN
+
+# # proxy the cloud run vllm model serving
+# proxy-cloud-run-vllm model="gemma-3-4b-it" provider="google":
+# 	gcloud run services proxy {{provider}}-{{model}}-vllm --port=8000 --region=$LOCATION --project=$PROJECT_ID
+
+# # destroy the cloud run model serving
+# destroy-cloud-run-vllm model="gemma-3-4b-it" provider="google":
+# 	gcloud run services delete {{provider}}-{{model}}-vllm --region=$LOCATION --project=$PROJECT_ID
