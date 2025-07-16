@@ -1,8 +1,6 @@
 # GCP LLM Serving Benchmarks
 
-This project provides a comprehensive benchmark analysis of various solutions for serving Large Language Models (LLMs) on Google Cloud Platform (GCP). The goal is to evaluate the scalability, performance, and cost-effectiveness of each approach to provide clear guidance for deploying production-grade LLM applications.
-
-This benchmark focuses on managed and performance-optimized solutions, deliberately excluding basic, non-specialized deployments.
+This project provides a comprehensive benchmark analysis of various solutions for serving Large Language Models (LLMs) on Google Cloud Platform (GCP). The goal is to evaluate the scalability, performance, and cost-effectiveness of each approach to provide clear guidance for deploying LLM applications.
 
 ---
 
@@ -91,6 +89,7 @@ Limits:
 
 Solutions:
 - https://github.com/GoogleCloudPlatform/generative-ai/blob/main/open-models/serving/cloud_run_vllm_gemma3_inference.ipynb
+- https://cloud.google.com/run/docs/configuring/services/gpu-best-practices
 
 ### 4\. GKE + High-Performance Serving Framework (vLLM)
 
