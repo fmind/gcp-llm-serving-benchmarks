@@ -149,22 +149,3 @@ class CloudRunOllama(Benchmark, lc.HttpUser):
                 },
             }
             self.client.post(url=url, json=body, params=params)
-
-
-# class CloudRunVllm(Benchmark, lc.HttpUser):
-#     """Locust user for benchmarking Cloud Run VLLM."""
-
-#     host: str = "http://localhost:8000"
-
-#     @lc.task
-#     def predict(self):
-#         """Send a prediction request to the Cloud Run VLLM."""
-#         url = "/v1/completions"
-#         for text in self.iter_data():
-#             body = {
-#                 "prompt": text,
-#                 "model": self.options.model,
-#                 "max_tokens": self.options.max_output_tokens,
-#                 "temperature": self.options.temperature,
-#             }
-#             self.client.post(url=url, json=body)

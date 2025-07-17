@@ -2,122 +2,54 @@
 
 This project provides a comprehensive benchmark analysis of various solutions for serving Large Language Models (LLMs) on Google Cloud Platform (GCP). The goal is to evaluate the scalability, performance, and cost-effectiveness of each approach to provide clear guidance for deploying LLM applications.
 
----
+For a detailed analysis and discussion of the results, please refer to the Medium article: [Scaling the Summit: Challenges for Serving LLMs at Scale on GCP](https://fmind.medium.com/scaling-the-summit-challenges-for-serving-llms-at-scale-on-gcp-e0211efcdbbf)
 
-## Models
+## Benchmark Setup
 
-### Gemini
+The load testing is performed using `locust`, as defined in `locustfile.py`. The script simulates a ramp-up of concurrent users, sending prompts from the `databricks-dolly-15k` dataset to the different LLM serving solutions. The `locustfile.py` defines different user classes for each of the tested solutions: `VertexAIMaaS`, `VertexAIEndpoint`, and `CloudRunOllama`.
 
-### Gemma
+## Analysis
 
-https://ai.google.dev/gemma/docs/core#sizes
+The analysis of the benchmark results is performed in the `analysis.ipynb` notebook. The notebook loads the raw data from the `results/` directory, processes it using `polars`, and generates visualizations with `seaborn` to compare the performance of the different solutions.
 
-## 🚀 Solutions Under Review
+## Solutions Under Review
 
 We are evaluating the following four serving configurations to understand their trade-offs.
 
-### 1\. Vertex AI for First-Party Models
+### 1. Vertex AI for First-Party Models
 
 - **Description**: This approach uses Google's fully managed, serverless AI platform, **Vertex AI**, to serve Google's own state-of-the-art models.
-
 - **Model**: Gemini 2.5
 
-- **Key Features**:
-
-  - No infrastructure management required.
-
-  - Pay-per-use pricing.
-
-  - Seamless integration with the GCP ecosystem.
-
-  - Built-in scalability and reliability managed by Google.
-
-TODO:
-- https://cloud.google.com/blog/products/ai-machine-learning/learn-how-to-handle-429-resource-exhaustion-errors-in-your-llms
-- https://cloud.google.com/vertex-ai/generative-ai/docs/provisioned-throughput/error-code-429
-- https://console.cloud.google.com/apis/api/aiplatform.googleapis.com/quotas
-
-### 2\. Vertex AI for Open Models (Optimized)
+### 2. Vertex AI for Open Models (Optimized)
 
 - **Description**: Leveraging **Vertex AI Model Garden and Endpoints** with pre-built, optimized containers for serving popular open-source models.
-
 - **Model**: Gemma 3
 
-- **Key Features**:
+### 3. Cloud Run + GPU
 
-  - Fully managed infrastructure with GPU acceleration.
-
-  - Simplified deployment for open models without manual container setup.
-
-  - Benefits from Vertex AI's scaling and monitoring capabilities.
-
-TODO:
-- https://cloud.google.com/vertex-ai/docs/general/deployment
-- https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma3
-- https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions
-- https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.endpoints/predict
-- https://cloud.google.com/vertex-ai/docs/reference/rest#rest_endpoints
-- https://cloud.google.com/vertex-ai/docs/general/deployment#target_utilization_and_configuration
-- https://cloud.google.com/vertex-ai/pricing
-
-### 3\. Cloud Run + GPU
-
-- **Description**: A serverless approach where the open-source model is packaged into a container and deployed on **Cloud Run**. Cloud Run automatically scales the service up or down, even to zero, based on incoming traffic.
-
+- **Description**: A serverless approach where the open-source model is packaged into a container and deployed on **Cloud Run**.
 - **Model**: Gemma 3
 
-- **Key Features**:
+### 4. GKE + High-Performance Serving Framework (vLLM)
 
-  - Combines the simplicity of serverless with the power of GPU acceleration.
-
-  - Ideal for applications with variable or unpredictable traffic.
-
-  - Cost-effective, as you only pay when requests are being processed.
-
-TODO:
-- https://cloud.google.com/run/docs/configuring/services/gpu
-- https://ai.google.dev/gemma/docs/run#choose-a-framework
-- https://cloud.google.com/run/docs/run-gemma-on-cloud-run
-- https://cloud.google.com/vertex-ai/generative-ai/docs/model-garden/self-deployed-models
-- https://cloud.google.com/vertex-ai/generative-ai/docs/model-garden/deploy-and-inference-tutorial
-- https://codelabs.developers.google.com/codelabs/how-to-run-inference-cloud-run-gpu-vllm#0
-- https://github.com/google-gemini/gemma-cookbook/blob/main/Demos/Gemma-on-Cloudrun/README.md
-- https://cloud.google.com/run/docs/run-gemma-on-cloud-run#set-concurrency-for-performance
-
-Limits:
-- Limit concurrency based scaling
-
-Solutions:
-- https://github.com/GoogleCloudPlatform/generative-ai/blob/main/open-models/serving/cloud_run_vllm_gemma3_inference.ipynb
-- https://cloud.google.com/run/docs/configuring/services/gpu-best-practices
-
-### 4\. GKE + High-Performance Serving Framework (vLLM)
-
-- **Description**: This option involves deploying the model on a **Google Kubernetes Engine (GKE)** cluster using a specialized, high-performance serving framework. We will use **vLLM**, which optimizes inference through techniques like PagedAttention for increased throughput.
-
+- **Description**: This option involves deploying the model on a **Google Kubernetes Engine (GKE)** cluster using a specialized, high-performance serving framework like **vLLM**.
 - **Model**: Gemma 3
 
-- **Key Features**:
+## Excluded Options
 
-  - Maximum performance and throughput for open-source models.
+- **Compute Engine (GCE)**: This approach requires significant manual setup and operational overhead.
 
-  - Fine-grained control over the serving environment and scaling policies via GKE.
+## Key Visualizations
 
-  - Represents a highly scalable, production-grade architecture for demanding workloads.
+**Failure Rate Over Time**
+![Failure Rate Over Time](figures/failure_rate_over_time.png)
 
-TODO:
-- https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm
-- https://cloud.google.com/kubernetes-engine/docs/integrations/ai-infra
-- https://cloud.google.com/kubernetes-engine/docs/how-to/serve-llm-l4-ray
-- https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#gemma-3-12b-it
+**Throughput vs. User Count**
+![Throughput vs. User Count](figures/throughput_vs_user_count.png)
 
-Limits:
-- Quota
+**User Count vs. Failures**
+![User Count vs. Failures](figures/user_count_vs_failures.png)
 
----
-
-## ❌ Excluded Options
-
-For this benchmark, we intentionally excluded the following options to maintain focus on managed and performance-optimized solutions:
-
-- **Compute Engine (GCE)**: This approach requires significant manual setup and operational overhead for infrastructure and scaling, falling outside our focus on streamlined, managed solutions.
+**User Count vs. Total Request Count**
+![User Count vs. Total Request Count](figures/user_count_vs_total_request_count.png)
