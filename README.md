@@ -2,7 +2,7 @@
 
 This project provides a comprehensive benchmark analysis of various solutions for serving Large Language Models (LLMs) on Google Cloud Platform (GCP). The goal is to evaluate the scalability, performance, and cost-effectiveness of each approach to provide clear guidance for deploying LLM applications.
 
-For a detailed analysis and discussion of the results, please refer to the Medium article: [Scaling the Summit: Challenges for Serving LLMs at Scale on GCP](https://fmind.medium.com/scaling-the-summit-challenges-for-serving-llms-at-scale-on-gcp-e0211efcdbbf)
+For a detailed analysis and discussion of the results, please refer to the article: [Scaling the Summit: Challenges for Serving LLMs at Scale on GCP](https://www.fmind.dev/articles/scaling-the-summit-challenges-for-serving-llms-at-scale-on-gcp/)
 
 ## Benchmark Setup
 
